@@ -1,4 +1,4 @@
-# 🏥 SkyPharma - Autonomous Pharmacy System (ASRS Robot) & Drone Delivery
+# 🏥 SkyPharma - Autonomous Medication Dispensing Robot (ASRS)
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![PyQt6](https://img.shields.io/badge/GUI-PyQt6-green.svg)](https://riverbankcomputing.com/software/pyqt/)
@@ -18,10 +18,12 @@
 
 ## 📌 Project Overview (Abstract)
 
-**SkyPharma** is an innovative mechatronics and software ecosystem designed for hospital and pharmacy logistics automation. It integrates:
-1. **An Automated Storage and Retrieval System (ASRS)** robot based on a 3-axis (X, Y, Z) Cartesian H-Bot kinematics, digitally controlled via an ATmega328P microcontroller running high-rate **GRBL 1.1** firmware.
-2. **A full-stack software suite** featuring a **real-time Admin Supervision SCADA desktop application (PyQt6)** and an **interactive Web Client Portal (Streamlit)** backed by a local SQLite relational database.
-3. **An Autonomous Drone Delivery Module (F450 Quadcopter)** controlled by an APM ArduPilot flight controller with a PWM servo-actuated release mechanism for urgent delivery of critical medications to remote or isolated areas.
+**SkyPharma** is an advanced robotic automation system designed for pharmaceutical inventory management and rapid medication retrieval (ASRS - *Automated Storage and Retrieval System*). The project comprises:
+
+1. **A 3-Axis Cartesian H-Bot Robot** engineered for high-precision, rapid spatial positioning $(X, Y, Z)$ across a matrix of medication storage compartments, driven by **GRBL 1.1** high-performance embedded motion firmware.
+2. **An Industrial SCADA & Supervision GUI (PyQt6)** providing full hardware control, machine homing, manual Jog operations, dynamic medicine coordinate mapping, live serial feedback, and emergency safety overrides.
+3. **An Interactive Web Client Portal (Streamlit)** directly synchronized with the local SQLite database, allowing patients and healthcare workers to view real-time stock levels, filter medications, and place automated dispensing orders.
+4. **An End-to-End Trajectory & Inventory Controller** written in Python that orchestrates safe G-code generation with clearance planes, serial buffer streaming, and atomic transaction updates upon successful retrieval.
 
 ---
 
@@ -36,15 +38,15 @@
 
 ---
 
-## 🛠️ Hardware Specifications
+## 🛠️ Hardware & Mechatronics Specifications
 
 ### 1. Cartesian ASRS Robot (Mechanics & Actuation)
-* **Kinematics:** H-Bot Cartesian architecture (synchronized X/Y motion with minimal moving inertia, coupled with a vertical Z-axis platform).
+* **Kinematics:** H-Bot Cartesian architecture (stationary motors driving synchronized X/Y axes through an interconnected continuous belt loop, minimizing moving carriage weight and enabling rapid accelerations).
 * **Stepper Motors:** 
-  - **X & Y Axes:** **NEMA 17 (17HS4401)** (High torque, $1.8^\circ$/step precision).
+  - **X & Y Axes:** **NEMA 17 (17HS4401)** (1.8° step angle, 40N·cm holding torque).
   - **Z Axis (Elevator / Gripper Bed):** **NEMA 17 (17HS4023)**.
-* **Transmission & Guides:** GT2 reinforced timing belts, 20-tooth synchronous pulleys, lead screws, and linear V-Slot aluminum extrusions with POM V-wheels.
-* **End-Effector:** Electromechanical gripper / vacuum suction mechanism engineered to extract, hold, and release medicine packages into the dispensing chute.
+* **Transmission & Guides:** GT2 reinforced timing belts, 20-tooth synchronous aluminum pulleys, lead screws, and V-Slot aluminum extrusion rails with POM precision wheels.
+* **End-Effector:** Electromechanical gripper / vacuum mechanism engineered to reliably grab, pull, and deposit medication boxes into the dispensing bay.
 
 ### 2. Control Electronics & Power Distribution
 * **Microcontroller:** **Arduino UNO (ATmega328P)** running customized **GRBL 1.1** motion control firmware.
@@ -55,13 +57,6 @@
   - Industrial **24V DC / 15A** switching power supply unit (PSU).
   - **LM2596 Buck Step-Down Converters** regulating auxiliary 12V (active CNC Shield cooling fan) and 5V logic rails.
   - Shielded USB serial communication link to the host PC.
-
-### 3. Drone Delivery Module (Aerial Dispatch)
-* **Airframe:** **DJI Flame Wheel F450** quadcopter frame.
-* **Flight Controller:** **APM 2.8 ArduPilot** with external compass and Neo-6M/8M GPS navigation module.
-* **Propulsion:** 4x **SunnySky 1400KV** brushless motors, 30A ESC speed controllers, 8-inch balanced propellers.
-* **Battery:** **3S 6500 mAh LiPo** (11.1V high-discharge pack).
-* **Cargo Release System:** 3D-printed payload latch triggered via a PWM servomotor mapped to a telemetry waypoint or auxiliary RC channel (**FlySky FS-i6**).
 
 ---
 
@@ -150,7 +145,7 @@ sequenceDiagram
     Controller->>Robot: Release gripper (Dispense)
     Controller->>GRBL: G0 X0 Y0 (Return to rest position)
     Controller->>DB: Log status as "DISPENSED"
-    DB-->>Client: Notification: Order ready for pickup / drone loading
+    DB-->>Client: Notification: Order ready for pickup at dispensing bay
 ```
 
 ---

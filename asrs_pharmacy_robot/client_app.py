@@ -332,7 +332,7 @@ with tab_architecture:
         1. **Interface Administrateur (PyQt6)** : Pilotage direct du robot (Homing, Jog, G-code), supervision du châssis, gestion des stocks et de la matrice de rangement.
         2. **Interface Client (Streamlit)** : Consultation dynamique du catalogue, synchronisation instantanée du stock et génération des ordres de prélèvement.
         3. **Noyau de Contrôle (Python & GRBL)** : Générateur de trajectoires sécurisées, client série asynchrone GRBL 1.1, automate d'états finis (FSM).
-        4. **Robotique Cartésienne H-Bot** : Moteurs pas à pas NEMA 17, drivers DRV8825, carte Arduino UNO + CNC Shield V3, préhenseur et capteurs fin de course.
-        5. **Module Aérien (Drone F450)** : Vecteur de livraison autonome APM ArduPilot pour l'acheminement urgent de médicaments vers les zones isolées.
+        4. **Robotique Cartésienne H-Bot** : Moteurs pas à pas NEMA 17, drivers DRV8825, carte Arduino UNO + CNC Shield V3, préhenseur électromécanique et capteurs de fin de course.
+        5. **Sas de Distribution Automatisé** : Dépôt sécurisé des boîtes de médicaments pour remise au patient / personnel soignant.
         """
     )
