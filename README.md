@@ -1,4 +1,4 @@
-# 🏥 SkyPharma - Système de Pharmacie Autonome (Robot ASRS) & Livraison par Drone
+# 🏥 SkyPharma - Autonomous Pharmacy System (ASRS Robot) & Drone Delivery
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![PyQt6](https://img.shields.io/badge/GUI-PyQt6-green.svg)](https://riverbankcomputing.com/software/pyqt/)
@@ -6,204 +6,204 @@
 [![GRBL 1.1](https://img.shields.io/badge/Firmware-GRBL_1.1-orange.svg)](https://github.com/gnea/grbl)
 [![Database](https://img.shields.io/badge/Database-SQLite3-lightgrey.svg)](https://www.sqlite.org/)
 [![Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)]()
 
-> **Projet de Fin d'Année (PFA)**  
-> **Filière :** Cycle Ingénieur en Génie Électrique et Contrôle Industriel (GECI)  
-> **Institution :** Faculté des Sciences et Techniques (FST)  
-> **Auteur :** **Mohammed HSINY**  
-> **Encadrante :** **Pr. Nada EL GMILI**
-
----
-
-## 📌 Présentation du Projet (Abstract)
-
-**SkyPharma** est un écosystème mécatronique et logiciel innovant dédié à l'automatisation hospitalière et pharmaceutique. Il combine :
-1. **Un robot de stockage et de dispensation automatisé (ASRS - *Automated Storage and Retrieval System*)** basé sur une cinématique cartésienne H-Bot 3 axes (X, Y, Z) piloté par microcontrôleur sous firmware GRBL 1.1.
-2. **Une suite logicielle complète** composée d'une **interface administrateur de supervision en temps réel (PyQt6 / SCADA)** et d'un **portail web client interactif (Streamlit)** connecté à une base de données relationnelle SQLite.
-3. **Un vecteur de livraison par drone autonome (F450)** sous contrôleur de vol APM ArduPilot avec système d'accrochage/largage par servomoteur PWM pour l'acheminement urgent de médicaments vers des zones enclavées ou des services distants.
+> **Final Year Engineering Project (PFA)**  
+> **Major:** Electrical Engineering & Industrial Automation (GECI)  
+> **Institution:** Faculty of Sciences and Techniques (FST)  
+> **Author:** **Mohammed HSINY**  
+> **Supervisor:** **Prof. Nada EL GMILI**
 
 ---
 
-## 📸 Galerie & Démonstrations
+## 📌 Project Overview (Abstract)
 
-| Modélisation 3D (SolidWorks) | Châssis Réel Réalisé | Interface Supervision SCADA (PyQt6) |
+**SkyPharma** is an innovative mechatronics and software ecosystem designed for hospital and pharmacy logistics automation. It integrates:
+1. **An Automated Storage and Retrieval System (ASRS)** robot based on a 3-axis (X, Y, Z) Cartesian H-Bot kinematics, digitally controlled via an ATmega328P microcontroller running high-rate **GRBL 1.1** firmware.
+2. **A full-stack software suite** featuring a **real-time Admin Supervision SCADA desktop application (PyQt6)** and an **interactive Web Client Portal (Streamlit)** backed by a local SQLite relational database.
+3. **An Autonomous Drone Delivery Module (F450 Quadcopter)** controlled by an APM ArduPilot flight controller with a PWM servo-actuated release mechanism for urgent delivery of critical medications to remote or isolated areas.
+
+---
+
+## 📸 Media Gallery & Demonstrations
+
+| 3D CAD Model (SolidWorks) | Physical Assembled Robot | Admin SCADA Supervision UI (PyQt6) |
 | :---: | :---: | :---: |
-| ![SolidWorks CAD](asrs_pharmacy_robot/assets/skypharma_solidworks.png) | ![Châssis Réel](asrs_pharmacy_robot/assets/skypharma_chassis_real.jpg) | ![Supervision SCADA](asrs_pharmacy_robot/assets/skypharma_scada.png) |
+| ![SolidWorks CAD](asrs_pharmacy_robot/assets/skypharma_solidworks.png) | ![Physical Chassis](asrs_pharmacy_robot/assets/skypharma_chassis_real.jpg) | ![Supervision SCADA](asrs_pharmacy_robot/assets/skypharma_scada.png) |
 
-🎥 **Vidéo de démonstration complète du cycle de dispensation :** [`sky_pharma_demonstrations.mp4`](sky_pharma_demonstrations.mp4)  
-📄 **Rapport technique complet (90 pages) :** [`Rapport_PFA_Vfinale.pdf`](Rapport_PFA_Vfinale.pdf)
-
----
-
-## 🛠️ Architecture Matérielle (Hardware Specifications)
-
-### 1. Robot Cartésien ASRS (Mécanique & Actionneurs)
-* **Cinématique :** Structure cartésienne H-Bot (mouvements synchronisés X/Y et axe Z vertical).
-* **Moteurs pas à pas :** 
-  - Axes X & Y : **NEMA 17 (17HS4401)** (Couple nominal élevé, précision angulaire 1.8°/pas).
-  - Axe Z (Élévateur/Plateau) : **NEMA 17 (17HS4023)**.
-* **Transmission :** Courroies crantées GT2, poulies synchrones 20 dents, tiges filetées trapézoïdales et guidages linéaires sur profilés aluminium V-Slot.
-* **Préhenseur :** Système d'accroche/ventouse électromécanique commandé pour extraire et déposer les boîtes de médicaments dans le sas de délivrance.
-
-### 2. Électronique de Commande & Puissance
-* **Microcontrôleur :** **Arduino UNO (ATmega328P)** exécutant le firmware haute performance **GRBL 1.1**.
-* **Carte d'extension :** **CNC Shield V3** assurant le routage des signaux STEP/DIR, des fins de course et de l'alimentation.
-* **Drivers de puissance :** **DRV8825** avec réglage fin du Vref (courant réglé pour éviter la perte de pas et l'échauffement) et micropas (Microstepping 1/16 - 1/32).
-* **Capteurs & Sécurités :** Capteurs de fin de course mécaniques (Microswitches Endstops) sur chaque axe pour le cycle d'initialisation (*Homing* `$H`) et la limitation logicielle/matérielle des courses (*Soft/Hard limits*).
-* **Alimentation & Refroidissement :**
-  - Bloc d'alimentation industriel **24V DC / 15A** pour la puissance des moteurs.
-  - Régulateurs abaisseurs de tension **Buck LM2596 (12V / 5V)** pour la logique et le ventilateur de refroidissement actif de la carte de puissance.
-  - Communication série via liaison USB blindée reliée au PC superviseur.
-
-### 3. Module Aérien de Livraison par Drone
-* **Châssis :** Quadricoptère **DJI Flame Wheel F450**.
-* **Contrôleur de vol :** **APM 2.8 ArduPilot** avec boussole et module GPS Neo-6M/8M.
-* **Motorisation :** 4 moteurs Brushless **SunnySky 1400KV**, variateurs ESC 30A, hélices 8 pouces.
-* **Alimentation :** Batterie **LiPo 3S 6500 mAh** (11.1V, fort taux de décharge).
-* **Mécanisme de largage :** Système de loquet rotatif imprimé en 3D actionné par servomoteur commandé en PWM via canal auxiliaire de la radiocommande **FlySky FS-i6** ou waypoint de mission automatique.
+🎥 **Full Dispensing Cycle Video Demonstration:** [`sky_pharma_demonstrations.mp4`](sky_pharma_demonstrations.mp4)  
+📄 **Comprehensive Technical Engineering Report (90 pages):** [`Rapport_PFA_Vfinale.pdf`](Rapport_PFA_Vfinale.pdf)
 
 ---
 
-## 💻 Architecture Logicielle (Software Stack)
+## 🛠️ Hardware Specifications
+
+### 1. Cartesian ASRS Robot (Mechanics & Actuation)
+* **Kinematics:** H-Bot Cartesian architecture (synchronized X/Y motion with minimal moving inertia, coupled with a vertical Z-axis platform).
+* **Stepper Motors:** 
+  - **X & Y Axes:** **NEMA 17 (17HS4401)** (High torque, $1.8^\circ$/step precision).
+  - **Z Axis (Elevator / Gripper Bed):** **NEMA 17 (17HS4023)**.
+* **Transmission & Guides:** GT2 reinforced timing belts, 20-tooth synchronous pulleys, lead screws, and linear V-Slot aluminum extrusions with POM V-wheels.
+* **End-Effector:** Electromechanical gripper / vacuum suction mechanism engineered to extract, hold, and release medicine packages into the dispensing chute.
+
+### 2. Control Electronics & Power Distribution
+* **Microcontroller:** **Arduino UNO (ATmega328P)** running customized **GRBL 1.1** motion control firmware.
+* **Expansion Board:** **CNC Shield V3** for routing STEP/DIR signals, hardware endstops, and auxiliary relays.
+* **Stepper Drivers:** **DRV8825** configured with fine-tuned reference voltages ($V_{ref}$) and microstepping (1/16 to 1/32) for smooth, silent, and stall-free motion.
+* **Sensors & Safety Bounds:** Mechanical microswitch endstops on each axis enabling automated homing cycles (`$H`) and soft/hard travel limit protection.
+* **Power Supply & Thermal Management:**
+  - Industrial **24V DC / 15A** switching power supply unit (PSU).
+  - **LM2596 Buck Step-Down Converters** regulating auxiliary 12V (active CNC Shield cooling fan) and 5V logic rails.
+  - Shielded USB serial communication link to the host PC.
+
+### 3. Drone Delivery Module (Aerial Dispatch)
+* **Airframe:** **DJI Flame Wheel F450** quadcopter frame.
+* **Flight Controller:** **APM 2.8 ArduPilot** with external compass and Neo-6M/8M GPS navigation module.
+* **Propulsion:** 4x **SunnySky 1400KV** brushless motors, 30A ESC speed controllers, 8-inch balanced propellers.
+* **Battery:** **3S 6500 mAh LiPo** (11.1V high-discharge pack).
+* **Cargo Release System:** 3D-printed payload latch triggered via a PWM servomotor mapped to a telemetry waypoint or auxiliary RC channel (**FlySky FS-i6**).
+
+---
+
+## 💻 Software Architecture & Project Structure
 
 ```
 SKYPHARMA/
-├── README.md                    # Documentation centrale et guide de démarrage
-├── Rapport_PFA_Vfinale.pdf      # Rapport de PFA complet (90 pages)
-├── skypharma_chassis_real.jpg  # Photo du robot physique
-├── skypharma_solidworks.png    # Rendu 3D SolidWorks
-├── skypharma_scada.png         # Capture de l'interface SCADA
-├── sky_pharma_demonstrations.mp4# Vidéo démonstrative de la dispensation
-└── asrs_pharmacy_robot/        # Suite logicielle du robot
-    ├── app.py                  # Point d'entrée Interface Superviseur PyQt6
-    ├── app_cli.py              # Interface CLI autonome pour tests & automation
-    ├── client_app.py           # Portail Web Client & Commande (Streamlit)
-    ├── requirements.txt        # Dépendances Python (PyQt6, Streamlit, pyserial, pytest)
+├── README.md                    # Main Project Documentation (English)
+├── Rapport_PFA_Vfinale.pdf      # Complete Academic PFA Report (90 pages)
+├── skypharma_chassis_real.jpg  # Photo of the real hardware robot
+├── skypharma_solidworks.png    # 3D CAD SolidWorks rendering
+├── skypharma_scada.png         # Screenshot of the PyQt6 SCADA interface
+├── sky_pharma_demonstrations.mp4# Video demonstration of dispensing cycle
+└── asrs_pharmacy_robot/        # Core Robot Software Suite
+    ├── app.py                  # Entry point for Admin PyQt6 GUI
+    ├── app_cli.py              # Standalone CLI for headless automation & diagnostics
+    ├── client_app.py           # Interactive Web Client & Ordering Portal (Streamlit)
+    ├── requirements.txt        # Python dependencies (PyQt6, Streamlit, pyserial, pytest)
     ├── config/
-    │   └── machine_config.json # Paramètres machine (vitesses, limites, homing, feedrates)
+    │   └── machine_config.json # Machine parameters (speeds, travel limits, feedrates)
     ├── data/
-    │   └── asrs.db             # Base de données SQLite3 locale synchronisée
-    ├── assets/                 # Logos, illustrations et schémas
-    ├── docs/                   # Spécifications G-code et documentation GRBL
+    │   └── asrs.db             # Shared SQLite3 relational database
+    ├── assets/                 # Logos, diagrams, and reference media
+    ├── docs/                   # G-code specifications and GRBL documentation
     ├── src/
     │   ├── core/
-    │   │   ├── asrs_controller.py   # Orchestrateur central et gestionnaire de cycle
-    │   │   ├── gcode_generator.py   # Générateur de trajectoires G-code sécurisées
-    │   │   ├── grbl_client.py       # Client de streaming série USB asynchrone GRBL
-    │   │   ├── machine_config.py    # Modèle et validation de la configuration JSON
-    │   │   └── state_machine.py     # Machine à états finis (IDLE, HOMING, DISPENSING...)
+    │   │   ├── asrs_controller.py   # Central orchestrator & cycle manager
+    │   │   ├── gcode_generator.py   # Safe G-code trajectory generator
+    │   │   ├── grbl_client.py       # Asynchronous USB serial GRBL client
+    │   │   ├── machine_config.py    # Configuration loader & validation
+    │   │   └── state_machine.py     # Finite State Machine (IDLE, HOMING, DISPENSING...)
     │   ├── db/
-    │   │   ├── database.py          # Couche d'accès aux données (DAO SQLite)
+    │   │   ├── database.py          # SQLite Data Access Object (DAO)
     │   │   ├── models.py            # Dataclasses (Medicine, Location, DispenseLog)
-    │   │   └── schema.sql           # Schéma SQL des tables (medicines, dispense_history...)
+    │   │   └── schema.sql           # SQL tables (medicines, dispense_history, events)
     │   ├── ui/
-    │   │   ├── supervision_window.py# IHM Superviseur PyQt6 (Contrôle axes, stock, logs)
-    │   │   └── main_window.py      # Fenêtre principale et raccourcis
+    │   │   ├── supervision_window.py# Main PyQt6 SCADA Interface (Jog, Homing, Stock)
+    │   │   └── main_window.py      # Main window utilities
     │   └── utils/
-    │       ├── logger.py           # Journalisation rotative horodatée
-    │       └── exceptions.py       # Exceptions métiers personnalisées
-    └── tests/                      # Suite de tests unitaires automatisés (Pytest)
+    │       ├── logger.py           # Rotating file & console logger
+    │       └── exceptions.py       # Domain-specific custom exceptions
+    └── tests/                      # Automated unit test suite (Pytest)
 ```
 
 ---
 
-## 🖥️ Description des Interfaces
+## 🖥️ System Interfaces
 
-### 1. Interface Administrateur & Supervision (PyQt6 - `app.py`)
-L'interface administrateur est le centre de contrôle et d'exploitation du système :
-* **Connexion Matérielle :** Détection automatique des ports COM, sélection du baudrate (115200) et affichage en temps réel de l'état GRBL (`Idle`, `Run`, `Hold`, `Alarm`).
-* **Pilotage Manuel & Homing :** Bouton d'origine machine (*Homing Cycle* `$H`), commandes Jog pas à pas sur les axes X, Y et Z, arrêt d'urgence.
-* **Gestion du Stock & Matrice de Rangement :** Ajout, modification, suppression et affichage en tableau interactif de tous les médicaments avec leurs coordonnées spatiales réelles $(X, Y)$ en millimètres.
-* **Console de Commande Directe & Historique :** Envoi manuel de commandes G-code, suivi du buffer série et historique détaillé des cycles de dispensation avec horodatage.
+### 1. Administrator Supervision & SCADA Interface (PyQt6 - `app.py`)
+The central desktop command center for pharmacy operators:
+* **Hardware Connection:** Auto-detection of COM ports, baud rate configuration (115200), and real-time GRBL status polling (`Idle`, `Run`, `Hold`, `Alarm`).
+* **Manual Motion & Homing:** Machine origin calibration (*Homing Cycle* `$H`), incremental Jog on X, Y, and Z axes, emergency stop (*Feed Hold / Soft Reset*).
+* **Inventory & Coordinate Mapping:** Real-time CRUD operations for medicines, automatically linking each medicine with its physical Cartesian coordinates $(X, Y)$ in millimeters.
+* **Direct G-Code Terminal & Auditing:** Manual command execution, serial buffer monitoring, and persistent timestamped dispensing history logs.
 
-### 2. Interface Client & Portail de Commande (Streamlit - `client_app.py`)
-Une interface web moderne et réactive connectée à la même base de données locale du PC :
-* **Catalogue Dynamique :** Chaque médicament enregistré sur l'interface administrateur apparaît instantanément sur Streamlit.
-* **Recherche & Filtres :** Recherche textuelle en temps réel et filtre par catégorie thérapeutique.
-* **Validation des Commandes :** Affichage de la disponibilité en stock, des coordonnées de casier, sélection de la quantité et validation instantanée d'une commande client qui décrémente automatiquement le stock et enregistre l'ordre de prélèvement.
+### 2. Client Web Portal & Order Interface (Streamlit - `client_app.py`)
+A modern, responsive web application for patients and medical staff:
+* **Real-Time Database Synchronization:** Directly reads from the shared `data/asrs.db` database. Any medication registered or edited on the Admin GUI appears instantly on the client app.
+* **Search & Therapeutic Categories:** Live search bar and category filtering (e.g., Analgesic, Antibiotic, etc.).
+* **Live Order Placement:** Visual stock availability badges, storage compartment preview, and one-click ordering which automatically decrements inventory and queues the dispensing cycle.
 
 ---
 
-## 🔄 Cycle de Fonctionnement & Trajectoire G-Code
-
-Le prélèvement d'un médicament suit un cycle automatisé déterministe et sécurisé :
+## 🔄 Automated Dispensing Cycle & Data Flow
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Client as 🧑‍💻 Client (Streamlit)
-    participant DB as 🗄️ Base SQLite (asrs.db)
-    actor Admin as 👨‍⚕️ Superviseur (PyQt6)
-    participant Controller as ⚙️ ASRS Controller
-    participant GRBL as 🔌 Arduino GRBL
-    participant Robot as 🤖 Mécanique & Préhenseur
+    actor Client as 🧑‍💻 Client (Streamlit Web Portal)
+    participant DB as 🗄️ SQLite Database (asrs.db)
+    actor Admin as 👨‍⚕️ Pharmacist / Operator (PyQt6)
+    participant Controller as ⚙️ ASRS Controller Engine
+    participant GRBL as 🔌 Arduino GRBL Controller
+    participant Robot as 🤖 H-Bot Mechanics & Gripper
 
-    Client->>DB: Passe une commande de médicament
-    DB-->>Admin: Mise à jour du stock et ordre de dispensation
-    Admin->>Controller: Lancement du cycle de dispensation (ID)
-    Controller->>DB: Récupération des coordonnées (X, Y)
-    Controller->>GRBL: G0 Z{safe} (Levée de sécurité)
-    Controller->>GRBL: G0 X{target} Y{target} (Positionnement au casier)
-    Controller->>GRBL: G1 Z{pick} F{speed} (Descente / Approche)
-    Controller->>Robot: Activation du préhenseur
-    Controller->>GRBL: G0 Z{safe} (Dégagement)
-    Controller->>GRBL: G0 X{drop} Y{drop} (Déplacement vers sas de sortie)
-    Controller->>Robot: Désactivation du préhenseur (Dépôt)
-    Controller->>GRBL: G0 X0 Y0 (Retour position de repos)
-    Controller->>DB: Enregistrement statut "DISPENSED"
-    DB-->>Client: Commande prête pour retrait / livraison
+    Client->>DB: Places medication order
+    DB-->>Admin: Updates stock count & triggers pending dispense
+    Admin->>Controller: Initiates dispensing cycle (Medicine ID)
+    Controller->>DB: Queries spatial coordinates (X, Y)
+    Controller->>GRBL: G0 Z{safe_height} (Safety clearance)
+    Controller->>GRBL: G0 X{target_x} Y{target_y} (Position over bin)
+    Controller->>GRBL: G1 Z{pick_height} F{feed} (Descent into bin)
+    Controller->>Robot: Engage electromechanical gripper
+    Controller->>GRBL: G0 Z{safe_height} (Retract with medication)
+    Controller->>GRBL: G0 X{drop_x} Y{drop_y} (Travel to delivery chute)
+    Controller->>Robot: Release gripper (Dispense)
+    Controller->>GRBL: G0 X0 Y0 (Return to rest position)
+    Controller->>DB: Log status as "DISPENSED"
+    DB-->>Client: Notification: Order ready for pickup / drone loading
 ```
 
 ---
 
-## 🚀 Guide d'Installation et d'Exécution
+## 🚀 Quick Start & Installation
 
-### 1. Prérequis
-* **Python 3.10** ou supérieur.
-* **Carte Arduino UNO** connectée en USB (avec firmware GRBL 1.1).
+### 1. Prerequisites
+* **Python 3.10** or higher.
+* **Arduino UNO** connected via USB (flashed with GRBL 1.1 firmware).
 
-### 2. Installation des dépendances
+### 2. Setup Environment
 ```bash
-# Aller dans le répertoire du projet
-cd asrs_pharmacy_robot
+# Clone the repository
+git clone https://github.com/medhsiny2003/asrs_robot.git
+cd asrs_robot/asrs_pharmacy_robot
 
-# Installer les packages Python requis
+# Install required Python packages
 pip install -r requirements.txt
 ```
 
-### 3. Lancement des applications
+### 3. Running the Applications
 
-* **Lancer l'Interface Administrateur & Supervision (PyQt6) :**
+* **Launch Admin Supervision GUI (PyQt6):**
   ```bash
   python app.py
   ```
 
-* **Lancer l'Interface Client Web (Streamlit) :**
+* **Launch Client Web Ordering Portal (Streamlit):**
   ```bash
   streamlit run client_app.py
   ```
 
-* **Lancer l'Interface en Ligne de Commande (CLI) :**
+* **Launch Headless CLI Controller:**
   ```bash
   python app_cli.py --list
   python app_cli.py --port COM3 --home
   python app_cli.py --port COM3 --dispense 1
   ```
 
-* **Exécuter la suite de tests unitaires :**
+* **Run Automated Test Suite:**
   ```bash
   python -m pytest
   ```
 
 ---
 
-## 👤 Auteur & Remerciements
+## 👤 Author & Acknowledgments
 
-* **Mohammed HSINY** - Élève Ingénieur en Génie Électrique & Contrôle Industriel
-* **Pr. Nada EL GMILI** - Encadrante de projet, Département Génie Électrique, Faculté des Sciences et Techniques (FST)
+* **Mohammed HSINY** - Electrical Engineering & Industrial Automation Graduate Student
+* **Prof. Nada EL GMILI** - Project Supervisor, Electrical Engineering Department, Faculty of Sciences and Techniques (FST)
 
 ---
 
-## 📜 Licence
+## 📜 License
 
-Ce projet est distribué sous licence MIT. Libre d'utilisation dans le cadre de projets de recherche, académiques et industriels.
+This project is licensed under the MIT License - feel free to use and adapt it for research, academic, and industrial purposes.

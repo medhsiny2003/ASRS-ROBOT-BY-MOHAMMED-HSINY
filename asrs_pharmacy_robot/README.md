@@ -1,28 +1,39 @@
-# SkyPharma ASRS
+# SkyPharma ASRS Software Suite
 
-Python control software for a GRBL-based ASRS pharmacy medication retrieval robot.
+Python control software for a GRBL-based ASRS (Automated Storage and Retrieval System) pharmacy medication robot.
 
-This first implementation focuses on the backend and CLI:
+## Features
 
-- load machine constants from JSON
-- manage medicines and dispensing history in SQLite
-- generate the validated absolute-position G-code cycle
-- stream commands to GRBL one line at a time
-- update stock only after a successful dispense cycle
+- **Admin Supervision & SCADA GUI (PyQt6)**: Real-time machine monitoring, Jog controls, automatic homing, inventory management with spatial coordinates $(X, Y)$, and G-code console.
+- **Client Web Portal (Streamlit)**: Live synchronized catalog, stock tracking, category filtering, and instant order placement.
+- **SQLite Database**: Persistent relational schema storing medicines, coordinates, stock levels, and dispensing history.
+- **GRBL Motion Control Engine**: Trajectory generation with safety clearance, USB serial streaming, and finite state machine.
 
 ## Quick Start
 
+### 1. Install dependencies
+
 ```powershell
-cd asrs_pharmacy_robot
+pip install -r requirements.txt
+```
+
+### 2. Run Admin SCADA Interface
+
+```powershell
+python app.py
+```
+
+### 3. Run Client Web Portal
+
+```powershell
+streamlit run client_app.py
+```
+
+### 4. CLI / Automated Testing
+
+```powershell
 python -m pytest
-python app_cli.py --init-db --seed-test-medicine
 python app_cli.py --list
+python app_cli.py --port COM3 --home
+python app_cli.py --port COM3 --dispense 1
 ```
-
-With the robot connected:
-
-```powershell
-python app_cli.py --port COM5 --home
-python app_cli.py --port COM5 --dispense 1
-```
-
