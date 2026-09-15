@@ -1,0 +1,35 @@
+# Python & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Testing & Pytest
+.pytest_cache/
+.pytest-tmp/
+pytest-cache-files-*/
+test-run-temp-*/
+test-tmp/
+.coverage
+htmlcov/
+
+# Logs & SQLite temporary files
+*.log
+logs/*.log
+*.sqlite-journal
+*.db-journal
+*.db-wal
+*.db-shm
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

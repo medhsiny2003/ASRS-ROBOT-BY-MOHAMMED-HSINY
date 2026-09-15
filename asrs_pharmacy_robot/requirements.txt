@@ -1,0 +1,4 @@
+pyserial>=3.5
+PyQt6>=6.7
+streamlit>=1.30
+pytest>=8.0

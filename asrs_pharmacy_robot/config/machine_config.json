@@ -1,0 +1,18 @@
+{
+  "z_high": -2.0,
+  "z_low": 2.0,
+  "destination_x": 9.5,
+  "destination_y": -2.9,
+  "home_x": 0.0,
+  "home_y": 0.0,
+  "feed_xy": 600,
+  "feed_z": 200,
+  "feed_home": 300,
+  "baudrate": 115200,
+  "require_homing_before_dispense": true,
+  "safe_min_x": -300.0,
+  "safe_max_x": 300.0,
+  "safe_min_y": -300.0,
+  "safe_max_y": 300.0
+}
+
