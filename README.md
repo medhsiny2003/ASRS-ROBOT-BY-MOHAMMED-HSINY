@@ -10,7 +10,7 @@
 > **Projet de Fin d'Année (PFA)**  
 > **Filière :** Cycle Ingénieur en Génie Électrique et Contrôle Industriel (GECI)  
 > **Institution :** Faculté des Sciences et Techniques (FST)  
-> **Auteurs :** **Bader EL BERKAOUI** & **Mohammed HSINY**  
+> **Auteur :** **Mohammed HSINY**  
 > **Encadrante :** **Pr. Nada EL GMILI**
 
 ---
@@ -197,9 +197,8 @@ pip install -r requirements.txt
 
 ---
 
-## 👥 Équipe du Projet & Remerciements
+## 👤 Auteur & Remerciements
 
-* **Bader EL BERKAOUI** - Élève Ingénieur en Génie Électrique & Contrôle Industriel
 * **Mohammed HSINY** - Élève Ingénieur en Génie Électrique & Contrôle Industriel
 * **Pr. Nada EL GMILI** - Encadrante de projet, Département Génie Électrique, Faculté des Sciences et Techniques (FST)
 
