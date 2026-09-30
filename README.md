@@ -2,7 +2,6 @@
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![PyQt6](https://img.shields.io/badge/GUI-PyQt6-green.svg)](https://riverbankcomputing.com/software/pyqt/)
-[![Streamlit](https://img.shields.io/badge/Client_Portal-Streamlit-FF4B4B.svg)](https://streamlit.io/)
 [![GRBL 1.1](https://img.shields.io/badge/Firmware-GRBL_1.1-orange.svg)](https://github.com/gnea/grbl)
 [![Database](https://img.shields.io/badge/Database-SQLite3-lightgrey.svg)](https://www.sqlite.org/)
 [![Status](https://img.shields.io/badge/Build-Passing-brightgreen.svg)]()
@@ -18,12 +17,11 @@
 
 ## 📌 Project Overview (Abstract)
 
-**SkyPharma** is an advanced robotic automation system designed for pharmaceutical inventory management and rapid medication retrieval (ASRS - *Automated Storage and Retrieval System*). The project comprises:
+**SkyPharma** is a mechatronic and software automation system developed for hospital and pharmacy automated medication storage and dispensing (ASRS - *Automated Storage and Retrieval System*). The architecture connects directly from the PC to the physical robot:
 
-1. **A 3-Axis Cartesian H-Bot Robot** engineered for high-precision, rapid spatial positioning $(X, Y, Z)$ across a matrix of medication storage compartments, driven by **GRBL 1.1** high-performance embedded motion firmware.
-2. **An Industrial SCADA & Supervision GUI (PyQt6)** providing full hardware control, machine homing, manual Jog operations, dynamic medicine coordinate mapping, live serial feedback, and emergency safety overrides.
-3. **An Interactive Web Client Portal (Streamlit)** directly synchronized with the local SQLite database, allowing patients and healthcare workers to view real-time stock levels, filter medications, and place automated dispensing orders.
-4. **An End-to-End Trajectory & Inventory Controller** written in Python that orchestrates safe G-code generation with clearance planes, serial buffer streaming, and atomic transaction updates upon successful retrieval.
+1. **A 3-Axis Cartesian H-Bot Robot**: Engineered for high-precision, rapid spatial positioning $(X, Y, Z)$ across a matrix of medication storage compartments, driven by **GRBL 1.1** high-performance embedded motion firmware.
+2. **Industrial SCADA & Supervision GUI (PyQt6)**: Direct USB/Serial connection to the Arduino GRBL controller, real-time status display (`Idle`, `Run`, `Hold`, `Alarm`), automated machine homing (`$H`), manual incremental Jog $(X, Y, Z)$, real-time spatial coordinate mapping $(X, Y)$ in millimeters, inventory CRUD management, direct G-code console, and safety overrides.
+3. **End-to-End Trajectory & Stock Controller**: Generates safe G-code cycles with clearance planes, streams commands line-by-line via buffered serial communication, and updates SQLite inventory atomically upon confirmed retrieval.
 
 ---
 
@@ -64,21 +62,21 @@
 
 ```
 SKYPHARMA/
-├── README.md                    # Main Project Documentation (English)
+├── README.md                    # Main Project Documentation
+├── app.py                       # Root launcher for the SCADA GUI
 ├── Rapport_PFA_Vfinale.pdf      # Complete Academic PFA Report (90 pages)
 ├── skypharma_chassis_real.jpg  # Photo of the real hardware robot
 ├── skypharma_solidworks.png    # 3D CAD SolidWorks rendering
 ├── skypharma_scada.png         # Screenshot of the PyQt6 SCADA interface
 ├── sky_pharma_demonstrations.mp4# Video demonstration of dispensing cycle
 └── asrs_pharmacy_robot/        # Core Robot Software Suite
-    ├── app.py                  # Entry point for Admin PyQt6 GUI
+    ├── app.py                  # Module launcher
     ├── app_cli.py              # Standalone CLI for headless automation & diagnostics
-    ├── client_app.py           # Interactive Web Client & Ordering Portal (Streamlit)
-    ├── requirements.txt        # Python dependencies (PyQt6, Streamlit, pyserial, pytest)
+    ├── requirements.txt        # Python dependencies (PyQt6, pyserial, pytest)
     ├── config/
     │   └── machine_config.json # Machine parameters (speeds, travel limits, feedrates)
     ├── data/
-    │   └── asrs.db             # Shared SQLite3 relational database
+    │   └── asrs.db             # Local SQLite3 database
     ├── assets/                 # Logos, diagrams, and reference media
     ├── docs/                   # G-code specifications and GRBL documentation
     ├── src/
@@ -103,38 +101,29 @@ SKYPHARMA/
 
 ---
 
-## 🖥️ System Interfaces
+## 🖥️ SCADA Supervision Interface Features (`app.py`)
 
-### 1. Administrator Supervision & SCADA Interface (PyQt6 - `app.py`)
-The central desktop command center for pharmacy operators:
-* **Hardware Connection:** Auto-detection of COM ports, baud rate configuration (115200), and real-time GRBL status polling (`Idle`, `Run`, `Hold`, `Alarm`).
-* **Manual Motion & Homing:** Machine origin calibration (*Homing Cycle* `$H`), incremental Jog on X, Y, and Z axes, emergency stop (*Feed Hold / Soft Reset*).
-* **Inventory & Coordinate Mapping:** Real-time CRUD operations for medicines, automatically linking each medicine with its physical Cartesian coordinates $(X, Y)$ in millimeters.
-* **Direct G-Code Terminal & Auditing:** Manual command execution, serial buffer monitoring, and persistent timestamped dispensing history logs.
-
-### 2. Client Web Portal & Order Interface (Streamlit - `client_app.py`)
-A modern, responsive web application for patients and medical staff:
-* **Real-Time Database Synchronization:** Directly reads from the shared `data/asrs.db` database. Any medication registered or edited on the Admin GUI appears instantly on the client app.
-* **Search & Therapeutic Categories:** Live search bar and category filtering (e.g., Analgesic, Antibiotic, etc.).
-* **Live Order Placement:** Visual stock availability badges, storage compartment preview, and one-click ordering which automatically decrements inventory and queues the dispensing cycle.
+* **Direct Hardware Link:** Connects directly via USB Serial COM port to the GRBL controller at `115200` baud.
+* **Real-Time Machine State:** Continuously polls and displays GRBL state (`Idle`, `Run`, `Hold`, `Alarm`) and coordinates $(X, Y, Z)$.
+* **Manual Motion & Origin:** 1-click Homing calibration (`$H`), Jog controls with custom step increments, and Emergency Stop.
+* **Storage Matrix & Inventory Management:** Add, edit, remove medications, link each medication to its storage cell $(X, Y)$ coordinates, and monitor real-time stock.
+* **Dispensing Automation:** Trigger automated retrieval cycles for any registered medicine with automatic stock decrement upon successful delivery.
+* **G-Code Terminal & Logging:** Real-time serial monitor, direct G-code execution, and persistent event logs.
 
 ---
 
-## 🔄 Automated Dispensing Cycle & Data Flow
+## 🔄 Automated Dispensing Cycle & Sequence
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Client as 🧑‍💻 Client (Streamlit Web Portal)
+    actor Operator as 👨‍⚕️ Pharmacist / Operator (PyQt6)
     participant DB as 🗄️ SQLite Database (asrs.db)
-    actor Admin as 👨‍⚕️ Pharmacist / Operator (PyQt6)
     participant Controller as ⚙️ ASRS Controller Engine
     participant GRBL as 🔌 Arduino GRBL Controller
     participant Robot as 🤖 H-Bot Mechanics & Gripper
 
-    Client->>DB: Places medication order
-    DB-->>Admin: Updates stock count & triggers pending dispense
-    Admin->>Controller: Initiates dispensing cycle (Medicine ID)
+    Operator->>Controller: Initiates dispensing cycle (Medicine ID)
     Controller->>DB: Queries spatial coordinates (X, Y)
     Controller->>GRBL: G0 Z{safe_height} (Safety clearance)
     Controller->>GRBL: G0 X{target_x} Y{target_y} (Position over bin)
@@ -144,51 +133,41 @@ sequenceDiagram
     Controller->>GRBL: G0 X{drop_x} Y{drop_y} (Travel to delivery chute)
     Controller->>Robot: Release gripper (Dispense)
     Controller->>GRBL: G0 X0 Y0 (Return to rest position)
-    Controller->>DB: Log status as "DISPENSED"
-    DB-->>Client: Notification: Order ready for pickup at dispensing bay
+    Controller->>DB: Log status as "DISPENSED" & decrement stock
+    DB-->>Operator: Order completed at dispensing bay
 ```
 
 ---
 
-## 🚀 Quick Start & Installation
+## 🚀 Quick Start & How to Run on Your PC
 
 ### 1. Prerequisites
-* **Python 3.10** or higher.
-* **Arduino UNO** connected via USB (flashed with GRBL 1.1 firmware).
+* **Python 3.10+** (Tested on Python 3.12 / 3.13)
+* **Arduino UNO** connected via USB (with GRBL 1.1 firmware)
 
-### 2. Setup Environment
-```bash
-# Clone the repository
-git clone https://github.com/medhsiny2003/asrs_robot.git
-cd asrs_robot/asrs_pharmacy_robot
-
-# Install required Python packages
-pip install -r requirements.txt
+### 2. Install Required Dependencies
+Open PowerShell or Command Prompt in the project folder and run:
+```powershell
+pip install PyQt6 pyserial pytest
 ```
 
-### 3. Running the Applications
+### 3. Launch the SCADA Interface
+```powershell
+python app.py
+```
+*(Or inside `asrs_pharmacy_robot`: `cd asrs_pharmacy_robot; python app.py`)*
 
-* **Launch Admin Supervision GUI (PyQt6):**
-  ```bash
-  python app.py
-  ```
+### 4. CLI Headless Mode (Optional)
+```powershell
+python asrs_pharmacy_robot/app_cli.py --list
+python asrs_pharmacy_robot/app_cli.py --port COM3 --home
+python asrs_pharmacy_robot/app_cli.py --port COM3 --dispense 1
+```
 
-* **Launch Client Web Ordering Portal (Streamlit):**
-  ```bash
-  streamlit run client_app.py
-  ```
-
-* **Launch Headless CLI Controller:**
-  ```bash
-  python app_cli.py --list
-  python app_cli.py --port COM3 --home
-  python app_cli.py --port COM3 --dispense 1
-  ```
-
-* **Run Automated Test Suite:**
-  ```bash
-  python -m pytest
-  ```
+### 5. Run Unit Tests
+```powershell
+python -m pytest asrs_pharmacy_robot/tests
+```
 
 ---
 

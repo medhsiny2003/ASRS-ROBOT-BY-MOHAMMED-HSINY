@@ -5,7 +5,6 @@ Python control software for a GRBL-based ASRS (Automated Storage and Retrieval S
 ## Features
 
 - **Admin Supervision & SCADA GUI (PyQt6)**: Real-time machine monitoring, Jog controls, automatic homing, inventory management with spatial coordinates $(X, Y)$, and G-code console.
-- **Client Web Portal (Streamlit)**: Live synchronized catalog, stock tracking, category filtering, and instant order placement.
 - **SQLite Database**: Persistent relational schema storing medicines, coordinates, stock levels, and dispensing history.
 - **GRBL Motion Control Engine**: Trajectory generation with safety clearance, USB serial streaming, and finite state machine.
 
@@ -23,13 +22,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-### 3. Run Client Web Portal
-
-```powershell
-streamlit run client_app.py
-```
-
-### 4. CLI / Automated Testing
+### 3. CLI / Automated Testing
 
 ```powershell
 python -m pytest
